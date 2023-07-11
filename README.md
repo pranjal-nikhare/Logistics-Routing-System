@@ -18,4 +18,4 @@ Technologies:
 - Front-end: HTML, CSS, JavaScript
 - Back-end: Node.js, Express.js
 - Database: MySQL
-- API Integration: MapQuest Geocoding API (for address validation) and routing APIs (e.g., Google Maps Directions API)
+- API Integration: MapQuest for search box suggestions, Mapbox Geocoding API for Location name to coordinates conversion, Mapbox distance matrix api for calculating the distances between every location.
