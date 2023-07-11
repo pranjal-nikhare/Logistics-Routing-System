@@ -23,12 +23,12 @@ app.post("/", async (req, res) => {
   const url =
     "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
     origin +
-    ".json?proximity=ip&access_token=pk.eyJ1IjoicHJvemU0NTA3IiwiYSI6ImNsamtiZm1lbDA1cnkzZXI3aHhobXNtbHgifQ.KEW3CNFdPpA_wG9CQt5pDA";
+    ".json?proximity=ip&access_token=xxxxxxxxxxxxxxxxxxxxxxx";
 
   const url2 =
     "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
     destination +
-    ".json?proximity=ip&access_token=pk.eyJ1IjoicHJvemU0NTA3IiwiYSI6ImNsamtiZm1lbDA1cnkzZXI3aHhobXNtbHgifQ.KEW3CNFdPpA_wG9CQt5pDA";
+    ".json?proximity=ip&access_token=xxxxxxxxxxxxxxxxxxxxxxx";
 
   https.get(url, function (response) {
     console.log(response.statusCode);
