@@ -3,7 +3,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
 const path = require("path");
-const { getBasicData, addRequest, getBasicDataById } = require("./database.js");
+const https = require("https");
+const database = require("./database.js");
 
 const staticPath = path.join(__dirname, "../public");
 app.use(express.static(staticPath));
@@ -14,35 +15,71 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-app.get("/Delivery_Data", async (req, res) => {
-  try {
-    const data = await getBasicData();
-    res.send(data);
-  } catch (error) {
-    console.error("Error retrieving data from the database:", error);
-    res.status(500).send("An error occurred while processing your request.");
-  }
-});
-
 app.post("/", async (req, res) => {
-  try {
-    const origin = req.body.OriginAddress;
-    const destination = req.body.DeliveryAddress;
-    const name = req.body.Date;
+  const origin = req.body.OriginAddress;
+  const destination = req.body.DeliveryAddress;
+  const name = req.body.UserName;
 
-    console.log(
-      name + " is requesting a delivery from " + origin + " to " + destination
-    );
-    console.log(req.body);
+  const url =
+    "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+    origin +
+    ".json?proximity=ip&access_token=pk.eyJ1IjoicHJvemU0NTA3IiwiYSI6ImNsamtiZm1lbDA1cnkzZXI3aHhobXNtbHgifQ.KEW3CNFdPpA_wG9CQt5pDA";
 
-    const result = await addRequest(name, origin, destination);
-    console.log("Data inserted into the database:", result);
+  const url2 =
+    "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+    destination +
+    ".json?proximity=ip&access_token=pk.eyJ1IjoicHJvemU0NTA3IiwiYSI6ImNsamtiZm1lbDA1cnkzZXI3aHhobXNtbHgifQ.KEW3CNFdPpA_wG9CQt5pDA";
 
-    res.send("Logged in and data inserted into the database!");
-  } catch (error) {
-    console.error("Error inserting data into the database:", error);
-    res.status(500).send("An error occurred while processing your request.");
-  }
+  https.get(url, function (response) {
+    console.log(response.statusCode);
+
+    let data = "";
+
+    response.on("data", function (chunk) {
+      data += chunk;
+    });
+
+    response.on("end", function () {
+      const jsonData = JSON.parse(data);
+      const coordinates = jsonData.features[0].geometry.coordinates;
+      console.log(coordinates);
+
+      https.get(url2, function (response2) {
+        console.log(response2.statusCode);
+
+        let data2 = "";
+
+        response2.on("data", function (chunk2) {
+          data2 += chunk2;
+        });
+
+        response2.on("end", async function () {
+          const jsonData2 = JSON.parse(data2);
+          const coordinates2 = jsonData2.features[0].geometry.coordinates;
+          console.log(coordinates2);
+
+          console.log(
+            name +
+              " is requesting a delivery from " +
+              origin +
+              " to " +
+              destination
+          );
+          console.log(req.body);
+
+          await database.insertData(
+            name,
+            origin,
+            coordinates,
+            destination,
+            coordinates2
+          );
+          console.log("Data inserted into database");
+          res.send("Your request has been submitted");
+        });
+      });
+    });
+  });
 });
 
 app.listen(port, () => {
