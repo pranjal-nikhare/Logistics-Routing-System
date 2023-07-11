@@ -22,7 +22,7 @@ function processCoordinates() {
 
       // Construct the API request URL
       const accessToken =
-        "pk.eyJ1IjoicHJvemU0NTA3IiwiYSI6ImNsamtjYWJvNTBhc3MzaW56dGliN2N2N2wifQ.rXNZTbpCvwg1aEt-HmfxeQ";
+        "xxxxxxxxxxxxxxxxxxxx";
       const apiUrl = `https://api.mapbox.com/directions-matrix/v1/mapbox/driving/${formattedOrigins.join(
         ";"
       )};${formattedDestinations.join(";")}?access_token=${accessToken}`;
